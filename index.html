@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Holy Burgers</title>
+
+    <!-- Archivo Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        /* GENERAL RESET & BASE STYLES */
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            width: 100%;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Archivo", sans-serif;
+            background: #000;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        ::selection {
+            background: #ff1a1a;
+            color: #000;
+        }
+
+        /* CUSTOM SCROLLBAR - DARK GREY */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #222;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333;
+        }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #222 #000;
+        }
+
+        /* LOADING SCREEN */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-circle {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #222;
+            border-top-color: #ff1a1a;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Fade out when page is loaded */
+        #loader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* NAVIGATION */
+        nav {
+            width: 100%;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #111;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+
+        nav .logo {
+            color: #ff1a1a;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-decoration: none;
+            user-select: none;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: color 0.3s ease, text-shadow 0.4s ease;
+            white-space: nowrap;
+        }
+
+        nav ul li a i {
+            margin-right: 6px;
+            color: #888;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover,
+        nav ul li a:hover i {
+            color: #ff1a1a;
+            text-shadow: 0 0 10px #ff1a1a;
+        }
+
+        /* HAMBURGER MENU */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+            transition: 0.3s ease;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #fff;
+            border-radius: 2px;
+            transition: 0.4s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            background: #111;
+            width: 100%;
+            padding: 10px;
+            border-top: 1px solid #222;
+            animation: fadeDown 0.3s ease forwards;
+        }
+
+        .mobile-menu a {
+            text-decoration: none;
+            color: #fff;
+            padding: 10px 0;
+            border-bottom: 1px solid #222;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-menu a:hover {
+            color: #ff1a1a;
+        }
+
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* HERO */
+        header {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            margin-bottom: 12px;
+        }
+
+        header p {
+            font-size: 1.05rem;
+            max-width: 650px;
+            margin: 0 auto;
+            opacity: 0.85;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 22px;
+            background: transparent;
+            border: 2px solid #ff1a1a;
+            color: #ff1a1a;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #ff1a1a;
+            color: #000;
+        }
+
+        .btn i {
+            margin-right: 6px;
+        }
+
+        /* SECTIONS */
+        section {
+            padding: 45px 20px;
+            max-width: 850px;
+            margin: auto;
+        }
+
+        section h2 {
+            color: #ff1a1a;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        /* SCROLL REVEAL */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADING SCREEN -->
+    <div id="loader">
+        <div class="loader-circle"></div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <a href="index.html" class="logo">Holy Burgers</a>
+
+        <ul>
+            <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="story.html"><i class="fa-solid fa-book-open"></i> Our Story</a></li>
+            <li><a href="feed.html"><i class="fa-solid fa-comment"></i>HB Feed</a></li>
+        </ul>
+
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="story.html"><i class="fa-solid fa-book-open"></i> Our Story</a>
+        <a href="feed.html"><i class="fa-solid fa-comment"></i> HB Feed</a>
+    </div>
+
+    <!-- HERO -->
+    <header id="hero" class="reveal">
+        <h1>Holy Burgers</h1>
+        <p>Welcome to the official Holy Burgers website! Here you can find all relevant information about our fast food RP!</p>
+        <a href="https://discord.gg/h9EXE6RY2w" class="btn">
+            <i class="fa-brands fa-discord"></i> Join our Community!
+        </a>
+    </header>
+
+    <!-- SECTION -->
+    <section id="about" class="reveal">
+        <h2>About Us</h2>
+        <p>
+            Holy Burgers is a budding fast food roleplay on Roblox, allied with 2 other communities.
+            Our goal is to rebuild our player base and return stronger than ever!
+        </p>
+    </section>
+
+    <!-- SCRIPTS -->
+    <script>
+        /* LOADING SCREEN */
+        window.addEventListener("load", () => {
+            const loader = document.getElementById("loader");
+            loader.classList.add("fade-out");
+            setTimeout(() => loader.style.display = "none", 500);
+        });
+
+        /* MOBILE MENU TOGGLE */
+        function toggleMenu() {
+            const menu = document.getElementById("mobileMenu");
+            const burger = document.querySelector(".hamburger");
+
+            menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+            burger.classList.toggle("active");
+        }
+
+        /* REVERSIBLE SCROLL REVEAL ANIMATION */
+        const elements = document.querySelectorAll('.reveal');
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                } else {
+                    entry.target.classList.remove('active');
+                }
+            });
+        }, { threshold: 0.2 });
+
+        elements.forEach(el => observer.observe(el));
+    </script>
+
+</body>
+</html>
